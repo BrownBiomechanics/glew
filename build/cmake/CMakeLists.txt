@@ -169,10 +169,10 @@ endif()
 
 install ( TARGETS ${targets_to_install}
           ${MAYBE_EXPORT}
-          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-          ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-          FRAMEWORK DESTINATION ${CMAKE_INSTALL_PREFIX}
+          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime
+          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Runtime
+          ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development
+          FRAMEWORK DESTINATION ${CMAKE_INSTALL_PREFIX} COMPONENT Runtime
 )
 
 if (BUILD_UTILS)
@@ -205,7 +205,8 @@ if (BUILD_UTILS)
   endif ()
 
   install ( TARGETS glewinfo visualinfo
-            DESTINATION ${CMAKE_INSTALL_BINDIR})
+            DESTINATION ${CMAKE_INSTALL_BINDIR}
+            COMPONENT Runtime)
 endif ()
 
 set (prefix ${CMAKE_INSTALL_PREFIX})
@@ -226,6 +227,7 @@ configure_file (${GLEW_DIR}/glew.pc.in ${CMAKE_CURRENT_BINARY_DIR}/glew.pc @ONLY
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/glew.pc
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+        COMPONENT Development
 )
 
 if(WIN32 AND MSVC AND (NOT MSVC_VERSION LESS 1600) AND (NOT CMAKE_VERSION VERSION_LESS "3.1"))
@@ -233,6 +235,7 @@ if(WIN32 AND MSVC AND (NOT MSVC_VERSION LESS 1600) AND (NOT CMAKE_VERSION VERSIO
         FILES $<TARGET_PDB_FILE:glew>
         DESTINATION ${CMAKE_INSTALL_LIBDIR}
         CONFIGURATIONS Debug RelWithDebInfo
+        COMPONENT Runtime
     )
 endif()
 
@@ -240,15 +243,18 @@ install (FILES
     ${GLEW_DIR}/include/GL/wglew.h
     ${GLEW_DIR}/include/GL/glew.h
     ${GLEW_DIR}/include/GL/glxew.h
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/GL)
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/GL
+    COMPONENT Development)
 
 if(MAYBE_EXPORT)
   install(EXPORT glew-targets DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/glew
+    COMPONENT Development
     NAMESPACE GLEW::)
   install(FILES
       ${CMAKE_CURRENT_SOURCE_DIR}/glew-config.cmake
       ${CMAKE_CURRENT_SOURCE_DIR}/CopyImportedTargetProperties.cmake
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/glew)
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/glew
+    COMPONENT Development)
 endif()
 
 if(NOT TARGET uninstall)
